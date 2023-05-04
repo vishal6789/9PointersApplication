@@ -5,6 +5,8 @@ const http = require("http");
 const app = express();
 const port = process.env.PORT || 5000;
 const ipRegex = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
+const fs = require("fs");
+const path = require("path");
 
 var dispH = null;
 var dispW = null;
@@ -53,7 +55,31 @@ app.post("/calculate", (req, res) => {
     });
 });
 
+app.get("/files", (req, res) => {
+    const folderPath = "../Sources/";
 
+    // Read the contents of the folder
+    fs.readdir(folderPath, (error, files) => {
+        if (error) {
+            return res
+                .status(500)
+                .json({ message: "Unable to read folder contents" });
+        }
+
+        // Filter the files to only include images and videos
+        const imageRegex = /\.(jpg|jpeg|png|gif)$/i;
+        const videoRegex = /\.(mp4|avi|mov)$/i;
+        const filteredFiles = files.filter(
+            (file) => imageRegex.test(file) || videoRegex.test(file)
+        );
+
+        // Map the files to their file names only
+        const fileNames = filteredFiles.map((file) => path.basename(file));
+
+        // Send the list of files in the response
+        res.json({ files: fileNames });
+    });
+});
 
 app.get("/info", (req, res) => {
     console.log(dispH, dispW, ip);
