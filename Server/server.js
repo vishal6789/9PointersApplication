@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const filUpload = require("express-fileupload");
 const cors = require("cors");
 const http = require("http");
 const app = express();
@@ -14,6 +15,7 @@ var ip = null;
 
 app.use(bodyParser.json());
 app.use(cors());
+app.use(filUpload());
 
 app.post("/calculate", (req, res) => {
     const { dispHeight, dispWidth, ipAddress } = req.body;
@@ -55,7 +57,7 @@ app.post("/calculate", (req, res) => {
     });
 });
 
-app.get("/files", (req, res) => {
+app.get("/fileslist", (req, res) => {
     const folderPath = "../Sources/";
 
     // Read the contents of the folder
@@ -73,6 +75,11 @@ app.get("/files", (req, res) => {
             (file) => imageRegex.test(file) || videoRegex.test(file)
         );
 
+        // Map the files to their full path
+        const filePaths = filteredFiles.map((file) =>
+            path.join(folderPath, file)
+        );
+
         // Map the files to their file names only
         const fileNames = filteredFiles.map((file) => path.basename(file));
 
@@ -81,12 +88,23 @@ app.get("/files", (req, res) => {
     });
 });
 
+app.post("/processimage", (req, res) => {
+    const image = req.files.classimage;
+    console.log(image);
+    fs.writeFileSync(`../Sources/${image.name}`, image.data, function (err) {
+        if (err) {
+            return console.log(err);
+        }
+    });
+    res.status(201).send("Image updated successfully");
+});
+
 app.get("/info", (req, res) => {
     console.log(dispH, dispW, ip);
     res.json({ dispH, dispW, ip });
 });
 
-//listening to port 5000
+//listening to port 5000s
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
 });
