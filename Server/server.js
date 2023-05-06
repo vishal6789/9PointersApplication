@@ -100,7 +100,7 @@ app.post("/processimage", (req, res) => {
 });
 
 // Define a route for getting the list of videos
-app.get('/videos', (req, res) => {
+app.get('/videosList', (req, res) => {
     const folderPath = '../Sources/'; // replace with the actual path to the folder
     const videoExtensions = ['.mp4', '.mov', '.avi']; // define the list of video extensions
   
@@ -112,6 +112,21 @@ app.get('/videos', (req, res) => {
       const videos = files.filter(file => videoExtensions.includes(path.extname(file)));
   
       return res.json({ videos });
+    });
+  });
+
+app.get('/imageList', (req, res) => {
+    const folderPath = '../Sources/'; // replace with the actual path to the folder
+    const imageExtensions = ['.png', '.jpg', '.jpeg']; // define the list of video extensions
+  
+    fs.readdir(folderPath, (err, files) => {
+      if (err) {
+        return res.status(500).json({ message: 'Unable to read folder contents' });
+      }
+  
+      const images = files.filter(file => imageExtensions.includes(path.extname(file)));
+  
+      return res.json({ images });
     });
   });
 
