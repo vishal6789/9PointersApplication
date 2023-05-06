@@ -99,6 +99,22 @@ app.post("/processimage", (req, res) => {
     res.status(201).send("Image updated successfully");
 });
 
+// Define a route for getting the list of videos
+app.get('/videos', (req, res) => {
+    const folderPath = '../Sources/'; // replace with the actual path to the folder
+    const videoExtensions = ['.mp4', '.mov', '.avi']; // define the list of video extensions
+  
+    fs.readdir(folderPath, (err, files) => {
+      if (err) {
+        return res.status(500).json({ message: 'Unable to read folder contents' });
+      }
+  
+      const videos = files.filter(file => videoExtensions.includes(path.extname(file)));
+  
+      return res.json({ videos });
+    });
+  });
+
 app.get("/info", (req, res) => {
     console.log(dispH, dispW, ip);
     res.json({ dispH, dispW, ip });
