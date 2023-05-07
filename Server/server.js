@@ -99,7 +99,7 @@ app.post("/processimage", (req, res) => {
     res.status(201).send("Image updated successfully");
 });
 
-// Define a route for getting the list of videos
+// Define a route for sending the list of videos
 app.get('/videosList', (req, res) => {
     const folderPath = '../Sources/'; // replace with the actual path to the folder
     const videoExtensions = ['.mp4', '.mov', '.avi']; // define the list of video extensions
@@ -115,6 +115,7 @@ app.get('/videosList', (req, res) => {
     });
   });
 
+// Defining route for sending the list of images
 app.get('/imageList', (req, res) => {
     const folderPath = '../Sources/'; // replace with the actual path to the folder
     const imageExtensions = ['.png', '.jpg', '.jpeg']; // define the list of video extensions
@@ -130,11 +131,42 @@ app.get('/imageList', (req, res) => {
     });
   });
 
+//defining route for info request
 app.get("/info", (req, res) => {
     console.log(dispH, dispW, ip);
     res.json({ dispH, dispW, ip });
 });
 
+//defining routes for receving image to display
+app.post("/playImage",(req,res) => {
+    const img = req.body.imageName;
+    console.log(img);
+    res.json({img}) ;
+});
+
+//defining routes for receving image to display
+app.post("/playVideo",(req,res) => {
+    const vid = req.body.videoName;
+    console.log(vid);
+    res.json({vid});
+});
+
+//defining routes for image upload
+app.post('/uploadImage', (req, res) => {
+    const { image } = req.files;
+    console.log(image);
+    const path = `../Sources/myImage.jpg`;
+    fs.writeFileSync(path, image.data);
+    res.json({ message: 'Image uploaded successfully' });
+  });
+
+//defining rotes for video upload
+app.post('/uploadVideo', (req, res) => {
+    const { video } = req.files;
+    const path = `../Sources/${video.name}`;
+    fs.writeFileSync(path, video.data);
+    res.json({ message: 'Video uploaded successfully' });
+  });
 //listening to port 5000s
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
