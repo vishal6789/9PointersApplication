@@ -8,10 +8,12 @@ const port = process.env.PORT || 5000;
 const ipRegex = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
 const fs = require("fs");
 const path = require("path");
+const { exec } = require('child_process')
 
-var dispH = null;
-var dispW = null;
-var ip = null;
+var dispH = 15;
+var dispW = 15;
+var ip = '192.168.0.8';
+var waitTime = 4;
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -141,14 +143,26 @@ app.get("/info", (req, res) => {
 app.post("/playImage",(req,res) => {
     const img = req.body.imageName;
     console.log(img);
-    res.json({img}) ;
+    console.log("Processning")
+    console.log(`python3 playImage.py ${ip} ${dispH} ${dispW} ${img} ${waitTime}`)
+    exec(`cd .. ; cd Codes/; python3 playImage.py ${ip} ${dispH} ${dispW} ${img} ${waitTime}`,(err,stdout)=>{
+        console.log("Processing done")
+        console.log(stdout)
+    })
+    res.status(201).send("Image played successfully")
 });
 
 //defining routes for receving image to display
 app.post("/playVideo",(req,res) => {
     const vid = req.body.videoName;
     console.log(vid);
-    res.json({vid});
+    console.log("Processning")
+    console.log(`python3 playVideo.py ${ip} ${dispH} ${dispW} ${vid} ${waitTime}`)
+    exec(`cd .. ; cd Codes/; python3 playVideo.py ${ip} ${dispH} ${dispW} ${vid} ${waitTime}`,(err,stdout)=>{
+        console.log("Processing done")
+        console.log(stdout)
+    })
+    res.status(201).send("Video played successfully")
 });
 
 //defining routes for image upload
