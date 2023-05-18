@@ -53,14 +53,14 @@ while(cap.isOpened()):
         starting_index_lowbyte = i & 0xFF
         
         sending_data = bytearray([protocallNo ,waitTime,starting_index_highbyte,starting_index_lowbyte]) + data[i*3:(3*i)+1350]
-        print(sending_data)
-        print(".................................................",i)
+        # print(sending_data)
+        # print(".................................................",i)
         time.sleep(0.010)
 
         # Send the message to the WLED server
         client_socket.sendto(sending_data, (WLED_IP_ADDRESS, WLED_PORT_NO))
-    print("frames send : ",i)
-    i+=1
+    # print("frames send : ",i)
+    # i+=1
     time.sleep(0.035)
 
 client_socket.close()
